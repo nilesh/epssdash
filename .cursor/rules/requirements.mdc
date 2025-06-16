@@ -1,0 +1,155 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# CVE Dashboard - Product Requirements Document
+
+## 1. Product Overview
+
+The CVE Dashboard is a web application that allows users to search for CVE (Common Vulnerabilities and Exposures) information, view detailed vulnerability data from the NVD database, and analyze risk through EPSS (Exploit Prediction Scoring System) metrics.
+
+The primary user persona is a security professional or IT administrator who needs to quickly assess vulnerability information for prioritization and remediation planning.
+
+The application must be free to use, with all data sourced from publicly available APIs and databases.
+
+## 2. User Workflows
+
+Users must be able to search for vulnerabilities by entering a valid CVE ID in the format "CVE-YYYY-NNNNN" where YYYY is the year and NNNNN is a sequence number.
+
+Upon valid CVE ID input and search, the application must fetch and display comprehensive vulnerability information from the NVD database and EPSS data from FIRST.org.
+
+Users must be able to view a 30-day historical timeline of EPSS scores for the selected vulnerability.
+
+The application must provide a clear visualization of the vulnerability's severity and exploitation probability through intuitive UI components.
+
+## 3. Functional Requirements
+
+### 3.1 Search and Validation
+- The application must validate CVE ID format client-side before sending requests to external APIs.
+
+### 3.2 NVD API Integration 
+The NVD API integration must retrieve the following minimum data points for each CVE:
+- CVE ID
+- Description
+- Publication date
+- Last modified date
+- CVSS score and vector
+- Severity rating
+- External references
+
+### 3.3 EPSS API Integration
+The EPSS API integration must retrieve:
+- Current EPSS score
+- EPSS percentile ranking
+- Historical EPSS data for at least 30 days (if available)
+
+### 3.4 Dashboard Display
+- The dashboard must display the vulnerability information in a structured format with clear visual indicators for severity levels.
+- The application must include a line chart visualization for the 30-day EPSS score trend.
+- External references must be displayed as clickable links that open in a new browser tab.
+- The application must provide basic mitigation recommendations based on vulnerability severity and type.
+- All widgets should be shown on the same screen and not via tabs
+- The CVE search box should be visible all the time on the dashboard, for the user to enter new CVE IDs.
+- 
+
+## 4. Non-Functional Requirements
+
+### 4.1 Responsiveness
+- The application must be responsive and functional across desktop (minimum 1024px width) and tablet (minimum 768px width) devices.
+
+### 4.2 Performance
+- The application must implement appropriate client-side caching to minimize redundant API calls.
+- API response times must be handled gracefully with appropriate loading states.
+
+### 4.3 Accessibility and Theming
+- The UI must support both light and dark mode through the use of CSS variables and theming.
+- The application must maintain accessibility compliance with WCAG 2.1 AA standards.
+
+### 4.4 Error Handling
+Error handling must include user-friendly messages for common failure scenarios:
+- Invalid CVE ID format
+- CVE not found in database
+- API connection failures
+- EPSS data not available for specific CVE
+
+## 5. Technical Requirements
+
+### 5.1 Frontend Framework
+- The application must be built using React with functional components and hooks.
+- UI components must use the shadcn/ui component library for consistent styling and behavior.
+- Data visualization must use the Recharts library for timeline and statistical displays.
+
+### 5.2 API Communication
+- The application must implement proper debouncing for search input to prevent excessive API calls.
+- The NVD API integration must include proper rate limiting handling and respect the API's usage terms.
+- The EPSS API integration must handle cases where historical data is incomplete or unavailable.
+
+## 6. API Integration
+
+### 6.1 NVD API
+The application must integrate with the NVD API v2.0 using the following endpoint:
+```
+https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=[CVE-ID]
+```
+
+### 6.2 EPSS API
+The application must integrate with the FIRST.org EPSS API using the following endpoint:
+```
+https://api.first.org/data/v1/epss?cve=[CVE-ID]
+```
+
+### 6.3 Historical Data
+- For EPSS historical data, the application should use appropriate endpoints or parameters to retrieve time-series data.
+
+### 6.4 Error Handling
+The application must implement appropriate error handling for all API responses, including:
+- 404 Not Found
+- 429 Too Many Requests
+- 500 Server Error
+- Network timeouts
+
+## 7. UI Components
+
+### 7.1 Required Components
+The application must include the following UI components:
+- Header with application title
+- Search bar with validation
+- Vulnerability details card
+- EPSS score visualization
+- EPSS timeline chart
+- External references list
+- Mitigation recommendations
+- Footer with attribution
+
+### 7.2 Visual Design
+- Severity indicators must use the following color scheme:
+  - Critical: Red
+  - High: Orange/Red
+  - Medium: Yellow/Amber
+  - Low: Blue
+  - None: Gray
+- EPSS score visualization must include both a percentage and a visual representation (gauge, progress bar, etc.) that clearly communicates risk level.
+
+## 8. Performance Requirements
+
+- Initial page load must complete within 2 seconds on standard broadband connections.
+- Search results must be displayed within 3 seconds of submission on standard broadband connections.
+- The application must implement appropriate loading states for all asynchronous operations.
+- The application must use client-side caching to store recently viewed CVE data for at least the duration of the session.
+
+## 9. Future Enhancements (Not in MVP)
+
+The application should be designed to accommodate future enhancements such as:
+- User accounts and saved vulnerability lists
+- Vulnerability comparison features
+- Bulk CVE analysis
+- Integration with additional vulnerability data sources
+- Custom dashboard views and layouts
+- Export functionality for reports
+
+## 10. Compliance and Attribution
+
+- The application must include appropriate attribution for all data sources (NVD, FIRST.org).
+- The application must include a disclaimer that it is for informational purposes only.
+- The application must comply with the terms of service for all integrated APIs.
